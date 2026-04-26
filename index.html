@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TimeBlock - Focus Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Trebuchet MS', sans-serif; background: #f4f6f8; color: #132033; }
@@ -35,6 +34,19 @@
     .web-bar-value { font-size: 12px; color: #5f6f84; width: 60px; text-align: right; }
     .web-tab { display: none; }
     .web-tab.active { display: block; }
+    .web-timer-display { font-size: 72px; font-weight: 800; text-align: center; color: #0a7a63; margin: 20px 0; }
+    .web-timer-phase { text-align: center; font-size: 16px; color: #5f6f84; margin-bottom: 20px; }
+    .web-timer-phase span { color: #0a7a63; font-weight: 600; }
+    .web-timer-buttons { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+    .web-timer-btn { padding: 14px 28px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: all 0.2s; }
+    .web-timer-btn.primary { background: #0a7a63; color: white; }
+    .web-timer-btn.secondary { background: #e5e8eb; color: #132033; }
+    .web-timer-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .web-input { padding: 10px 14px; border: 1px solid #e5e8eb; border-radius: 8px; font-size: 14px; width: 100%; }
+    .web-input:focus { outline: none; border-color: #0a7a63; }
+    .web-form-group { margin-bottom: 16px; }
+    .web-form-group label { display: block; margin-bottom: 6px; font-size: 13px; color: #5f6f84; }
+    .web-save-btn { background: #0a7a63; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; }
     @media (max-width: 768px) {
       .web-shell { grid-template-columns: 1fr; }
       .web-sidebar { padding: 16px; }
@@ -45,23 +57,23 @@
 <body>
 <div class="web-shell">
   <aside class="web-sidebar">
-    <h1>⏱️ TimeBlock</h1>
-    <p>Focus & Productivity Dashboard</p>
+    <h1>TimeBlock</h1>
+    <p>Focus Dashboard</p>
     <nav class="web-nav">
-      <button class="active" onclick="showTab('overview')">📊 Overview</button>
-      <button onclick="showTab('analytics')">📈 Analytics</button>
-      <button onclick="showTab('pomodoro')">🍅 Pomodoro</button>
-      <button onclick="showTab('settings')">⚙️ Settings</button>
+      <button class="active" data-tab="overview">Overview</button>
+      <button data-tab="analytics">Analytics</button>
+      <button data-tab="pomodoro">Pomodoro</button>
+      <button data-tab="settings">Settings</button>
     </nav>
     <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.2);">
-      <p style="font-size: 12px; opacity: 0.7;">This is a demo showcase. For full functionality, install the Chrome extension.</p>
+      <p style="font-size: 12px; opacity: 0.7;">Demo mode - Install Chrome extension for full functionality</p>
     </div>
   </aside>
 
   <main class="web-main">
     <header class="web-header">
       <h2 id="pageTitle">Overview</h2>
-      <span class="web-badge">Demo Mode</span>
+      <span class="web-badge">Demo</span>
     </header>
 
     <!-- Overview Tab -->
@@ -69,52 +81,26 @@
       <div class="web-grid">
         <div class="web-card">
           <p>Total Tracked</p>
-          <h3>4h 23m</h3>
+          <h3 id="totalTime">0h 0m</h3>
         </div>
         <div class="web-card">
           <p>Focus Time</p>
-          <h3>2h 45m</h3>
+          <h3 id="focusTime">0h 0m</h3>
         </div>
         <div class="web-card">
           <p>Productivity</p>
-          <h3>63%</h3>
+          <h3 id="productivity">0%</h3>
         </div>
       </div>
 
       <div class="web-grid" style="grid-template-columns: 1fr 1fr;">
         <div class="web-panel">
           <h3>Time by Category</h3>
-          <div class="web-bar">
-            <span class="web-bar-label">Work</span>
-            <div class="web-bar-track"><div class="web-bar-fill" style="width: 42%;"></div></div>
-            <span class="web-bar-value">1h 50m</span>
-          </div>
-          <div class="web-bar">
-            <span class="web-bar-label">Education</span>
-            <div class="web-bar-track"><div class="web-bar-fill" style="width: 21%;"></div></div>
-            <span class="web-bar-value">55m</span>
-          </div>
-          <div class="web-bar">
-            <span class="web-bar-label">Entertainment</span>
-            <div class="web-bar-track"><div class="web-bar-fill" style="width: 25%; background: linear-gradient(90deg, #ff6b6b, #ff8e8e);"></div></div>
-            <span class="web-bar-value">1h 5m</span>
-          </div>
-          <div class="web-bar">
-            <span class="web-bar-label">Social</span>
-            <div class="web-bar-track"><div class="web-bar-fill" style="width: 12%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div></div>
-            <span class="web-bar-value">33m</span>
-          </div>
+          <div id="categoryBars"></div>
         </div>
-
         <div class="web-panel">
           <h3>This Week</h3>
-          <div class="web-bar"><span class="web-bar-label">Mon</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 65%;"></div></div><span class="web-bar-value">3h 12m</span></div>
-          <div class="web-bar"><span class="web-bar-label">Tue</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 80%;"></div></div><span class="web-bar-value">4h 05m</span></div>
-          <div class="web-bar"><span class="web-bar-label">Wed</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 45%;"></div></div><span class="web-bar-value">2h 18m</span></div>
-          <div class="web-bar"><span class="web-bar-label">Thu</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 90%;"></div></div><span class="web-bar-value">4h 32m</span></div>
-          <div class="web-bar"><span class="web-bar-label">Fri</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 55%;"></div></div><span class="web-bar-value">2h 48m</span></div>
-          <div class="web-bar"><span class="web-bar-label">Sat</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 20%;"></div></div><span class="web-bar-value">58m</span></div>
-          <div class="web-bar"><span class="web-bar-label">Sun</span><div class="web-bar-track"><div class="web-bar-fill" style="width: 15%;"></div></div><span class="web-bar-value">42m</span></div>
+          <div id="weekBars"></div>
         </div>
       </div>
 
@@ -122,13 +108,7 @@
         <h3>Top Sites Today</h3>
         <table class="web-table">
           <thead><tr><th>Website</th><th>Time</th><th>Category</th></tr></thead>
-          <tbody>
-            <tr><td>youtube.com</td><td>1h 15m</td><td>Entertainment</td></tr>
-            <tr><td>github.com</td><td>58m</td><td>Work</td></tr>
-            <tr><td>stackoverflow.com</td><td>42m</td><td>Work</td></tr>
-            <tr><td>coursera.org</td><td>35m</td><td>Education</td></tr>
-            <tr><td>reddit.com</td><td>28m</td><td>Social</td></tr>
-          </tbody>
+          <tbody id="topSitesTable"></tbody>
         </table>
       </div>
     </section>
@@ -136,38 +116,21 @@
     <!-- Analytics Tab -->
     <section id="analytics" class="web-tab">
       <div class="web-panel">
-        <h3>Time Trend (Last 30 Days)</h3>
-        <div style="height: 200px; display: flex; align-items: flex-end; gap: 4px; padding: 20px 0;">
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 60%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 80%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 45%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 90%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 55%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 70%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #f59e0b, #f59e0b40); height: 85%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 50%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 95%; border-radius: 4px 4px 0 0;"></div>
-          <div style="flex: 1; background: linear-gradient(180deg, #0a7a63, #0a7a6340); height: 65%; border-radius: 4px 4px 0 0;"></div>
-        </div>
+        <h3>Time Trend (Last 7 Days)</h3>
+        <div id="trendBars" style="display: flex; align-items: flex-end; gap: 8px; height: 150px; padding: 20px 0;"></div>
       </div>
       <div class="web-grid" style="grid-template-columns: 1fr 1fr;">
         <div class="web-panel">
-          <h3>Top 5 Sites (All Time)</h3>
+          <h3>Top Sites (All Time)</h3>
           <table class="web-table">
             <thead><tr><th>Site</th><th>Total Time</th></tr></thead>
-            <tbody>
-              <tr><td>youtube.com</td><td>24h 15m</td></tr>
-              <tr><td>github.com</td><td>18h 42m</td></tr>
-              <tr><td>stackoverflow.com</td><td>12h 08m</td></tr>
-              <tr><td>gmail.com</td><td>8h 33m</td></tr>
-              <tr><td>notion.so</td><td>6h 55m</td></tr>
-            </tbody>
+            <tbody id="topSitesAll"></tbody>
           </table>
         </div>
         <div class="web-panel">
           <h3>Daily Average</h3>
-          <div style="text-align: center; padding: 20px;">
-            <h1 style="font-size: 48px; color: #0a7a63;">3h 12m</h1>
+          <div style="text-align: center; padding: 40px;">
+            <h1 id="dailyAvg" style="font-size: 48px; color: #0a7a63;">0h 0m</h1>
             <p style="color: #5f6f84; margin-top: 8px;">per day</p>
           </div>
         </div>
@@ -177,29 +140,27 @@
     <!-- Pomodoro Tab -->
     <section id="pomodoro" class="web-tab">
       <div class="web-panel">
-        <div style="text-align: center; padding: 40px;">
-          <p style="color: #5f6f84; font-size: 14px;">Current Phase</p>
-          <h1 style="font-size: 64px; margin: 16px 0;">25:00</h1>
-          <p style="color: #0a7a63; font-size: 18px;">Cycle 3 - Work Sprint</p>
-        </div>
-        <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px;">
-          <button style="background: #0a7a63; color: white; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer;">▶ Start</button>
-          <button style="background: #e5e8eb; color: #132033; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer;">⏸ Pause</button>
-          <button style="background: #e5e8eb; color: #132033; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; cursor: pointer;">⏭ Skip</button>
+        <p class="web-timer-phase">Current Phase: <span id="pomoPhase">Ready</span></p>
+        <div class="web-timer-display" id="pomoTimer">25:00</div>
+        <div class="web-timer-buttons">
+          <button class="web-timer-btn primary" id="pomoStart">Start</button>
+          <button class="web-timer-btn secondary" id="pomoPause">Pause</button>
+          <button class="web-timer-btn secondary" id="pomoSkip">Skip</button>
+          <button class="web-timer-btn secondary" id="pomoStop">Stop</button>
         </div>
       </div>
       <div class="web-grid" style="grid-template-columns: 1fr 1fr 1fr;">
         <div class="web-card" style="text-align: center;">
           <p>Work</p>
-          <h3>25m</h3>
+          <h3 id="workDuration">25m</h3>
         </div>
         <div class="web-card" style="text-align: center;">
           <p>Short Break</p>
-          <h3>5m</h3>
+          <h3 id="shortBreak">5m</h3>
         </div>
         <div class="web-card" style="text-align: center;">
           <p>Long Break</p>
-          <h3>15m</h3>
+          <h3 id="longBreak">15m</h3>
         </div>
       </div>
     </section>
@@ -208,30 +169,25 @@
     <section id="settings" class="web-tab">
       <div class="web-panel">
         <h3>Pomodoro Settings</h3>
-        <div class="web-grid" style="gap: 16px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e8eb;">
-            <span>Work Duration (minutes)</span>
-            <input type="number" value="25" style="width: 60px; padding: 8px; border: 1px solid #e5e8eb; border-radius: 6px;">
-          </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e8eb;">
-            <span>Short Break (minutes)</span>
-            <input type="number" value="5" style="width: 60px; padding: 8px; border: 1px solid #e5e8eb; border-radius: 6px;">
-          </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e5e8eb;">
-            <span>Long Break (minutes)</span>
-            <input type="number" value="15" style="width: 60px; padding: 8px; border: 1px solid #e5e8eb; border-radius: 6px;">
-          </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0;">
-            <span>Auto-start breaks</span>
-            <input type="checkbox" checked style="width: 20px; height: 20px;">
-          </div>
+        <div class="web-form-group">
+          <label>Work Duration (minutes)</label>
+          <input type="number" class="web-input" id="settingWork" value="25" min="1" max="90">
         </div>
+        <div class="web-form-group">
+          <label>Short Break (minutes)</label>
+          <input type="number" class="web-input" id="settingShort" value="5" min="1" max="30">
+        </div>
+        <div class="web-form-group">
+          <label>Long Break (minutes)</label>
+          <input type="number" class="web-input" id="settingLong" value="15" min="1" max="60">
+        </div>
+        <button class="web-save-btn" id="saveSettings">Save Settings</button>
       </div>
       <div class="web-panel">
-        <h3>Data Management</h3>
+        <h3>Data</h3>
         <div style="display: flex; gap: 12px;">
-          <button style="background: #e5e8eb; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">📥 Export CSV</button>
-          <button style="background: #fde8e8; color: #842121; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer;">🗑️ Clear All Data</button>
+          <button class="web-save-btn" style="background: #e5e8eb; color: #132033;" id="exportData">Export CSV</button>
+          <button class="web-save-btn" style="background: #fde8e8; color: #842121;" id="clearData">Clear All Data</button>
         </div>
       </div>
     </section>
@@ -239,13 +195,232 @@
 </div>
 
 <script>
-function showTab(tabName) {
-  document.querySelectorAll('.web-tab').forEach(function(t){ t.classList.remove('active')});
-  document.querySelectorAll('.web-nav button').forEach(function(b){ b.classList.remove('active')});
-  document.getElementById(tabName).classList.add('active');
-  if(event.target) event.target.classList.add('active');
-  document.getElementById('pageTitle').textContent = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+const STORAGE_KEY = 'timeblock_data';
+const SETTINGS_KEY = 'timeblock_settings';
+
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+let settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{"work":25,"shortBreak":5,"longBreak":15}');
+
+let pomoState = { running: false, paused: false, phase: 'work', timeLeft: settings.work * 60, cycle: 1 };
+let pomoInterval = null;
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
+
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+function formatTimer(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function renderOverview() {
+  const today = new Date().toISOString().split('T')[0];
+  const todayData = data[today] || {};
+  
+  let total = 0, focus = 0;
+  const cats = { Work: 0, Education: 0, Entertainment: 0, Social: 0, Other: 0 };
+  const sites = [];
+  
+  for (const site of Object.values(todayData)) {
+    total += site.total_time || 0;
+    if (site.category === 'Work' || site.category === 'Education') focus += site.total_time || 0;
+    cats[site.category] = (cats[site.category] || 0) + (site.total_time || 0);
+    sites.push({ domain: site.domain, time: site.total_time, category: site.category });
+  }
+  
+  const prod = total > 0 ? Math.round((focus / total) * 100) : 0;
+  
+  document.getElementById('totalTime').textContent = formatTime(total);
+  document.getElementById('focusTime').textContent = formatTime(focus);
+  document.getElementById('productivity').textContent = prod + '%';
+  
+  const catContainer = document.getElementById('categoryBars');
+  catContainer.innerHTML = '';
+  for (const [cat, time] of Object.entries(cats)) {
+    if (time > 0) {
+      const pct = Math.round((time / total) * 100);
+      catContainer.innerHTML += `<div class="web-bar"><span class="web-bar-label">${cat}</span><div class="web-bar-track"><div class="web-bar-fill" style="width:${pct}%"></div></div><span class="web-bar-value">${formatTime(time)}</span></div>`;
+    }
+  }
+  
+  const weekContainer = document.getElementById('weekBars');
+  weekContainer.innerHTML = '';
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const key = d.toISOString().split('T')[0];
+    const time = Object.values(data[key] || {}).reduce((s, x) => s + (x.total_time || 0), 0);
+    const pct = total > 0 ? Math.round((time / total) * 100) : 0;
+    weekContainer.innerHTML += `<div class="web-bar"><span class="web-bar-label">${days[i]}</span><div class="web-bar-track"><div class="web-bar-fill" style="width:${pct}%"></div></div><span class="web-bar-value">${formatTime(time)}</span></div>`;
+  }
+  
+  const tableBody = document.getElementById('topSitesTable');
+  sites.sort((a,b) => b.time - a.time).slice(0,5).forEach(s => {
+    tableBody.innerHTML += `<tr><td>${s.domain}</td><td>${formatTime(s.time)}</td><td>${s.category}</td></tr>`;
+  });
+}
+
+function renderAnalytics() {
+  let total = 0, days = 0;
+  const trendContainer = document.getElementById('trendBars');
+  trendContainer.innerHTML = '';
+  
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    const time = Object.values(data[key] || {}).reduce((s, x) => s + (x.total_time || 0), 0);
+    total += time;
+    days++;
+    const maxH = 120;
+    const h = Math.min(time / 60, maxH);
+    const pct = Math.round((h / maxH) * 100);
+    const label = d.toLocaleDateString(undefined, { weekday: 'short' });
+    trendContainer.innerHTML += `<div style="flex:1; display:flex; flex-direction:column; align-items:center;"><div style="width:100%; height:${pct}%; background:linear-gradient(180deg,#0a7a63,#0a7a6340); border-radius:4px 4px 0 0; min-height:4px;"></div><span style="font-size:10px;color:#5f6f84;margin-top:4px;">${label}</span></div>`;
+  }
+  
+  document.getElementById('dailyAvg').textContent = formatTime(days > 0 ? Math.floor(total / days) : 0);
+  
+  const allSites = {};
+  for (const dayData of Object.values(data)) {
+    for (const site of Object.values(dayData)) {
+      allSites[site.domain] = (allSites[site.domain] || 0) + (site.total_time || 0);
+    }
+  }
+  const sorted = Object.entries(allSites).sort((a,b) => b[1] - a[1]).slice(0,5);
+  const sitesBody = document.getElementById('topSitesAll');
+  sitesBody.innerHTML = '';
+  sorted.forEach(([domain, time]) => {
+    sitesBody.innerHTML += `<tr><td>${domain}</td><td>${formatTime(time)}</td></tr>`;
+  });
+}
+
+function renderPomodoro() {
+  document.getElementById('workDuration').textContent = settings.work + 'm';
+  document.getElementById('shortBreak').textContent = settings.shortBreak + 'm';
+  document.getElementById('longBreak').textContent = settings.longBreak + 'm';
+  updatePomodoroDisplay();
+}
+
+function updatePomodoroDisplay() {
+  document.getElementById('pomoTimer').textContent = formatTimer(pomoState.timeLeft);
+  const labels = { work: 'Work Sprint', shortBreak: 'Short Break', longBreak: 'Long Break' };
+  document.getElementById('pomoPhase').textContent = pomoState.running ? labels[pomoState.phase] : 'Ready';
+  document.getElementById('pomoStart').textContent = pomoState.paused ? 'Resume' : (pomoState.running ? 'Running' : 'Start');
+}
+
+function startPomodoro() {
+  if (pomoState.paused) {
+    pomoState.paused = false;
+  } else {
+    pomoState.running = true;
+    pomoState.phase = 'work';
+    pomoState.timeLeft = settings.work * 60;
+  }
+  pomoInterval = setInterval(() => {
+    if (!pomoState.paused && pomoState.running) {
+      pomoState.timeLeft--;
+      if (pomoState.timeLeft <= 0) {
+        if (pomoState.phase === 'work') {
+          pomoState.phase = pomoState.cycle % 4 === 0 ? 'longBreak' : 'shortBreak';
+          pomoState.timeLeft = (pomoState.phase === 'longBreak' ? settings.longBreak : settings.shortBreak) * 60;
+          if (pomoState.phase === 'shortBreak') pomoState.cycle++;
+        } else {
+          pomoState.phase = 'work';
+          pomoState.timeLeft = settings.work * 60;
+        }
+      }
+      updatePomodoroDisplay();
+    }
+  }, 1000);
+  updatePomodoroDisplay();
+}
+
+function pausePomodoro() {
+  pomoState.paused = true;
+  updatePomodoroDisplay();
+}
+
+function skipPomodoro() {
+  if (pomoState.phase === 'work') {
+    pomoState.phase = pomoState.cycle % 4 === 0 ? 'longBreak' : 'shortBreak';
+    pomoState.timeLeft = (pomoState.phase === 'longBreak' ? settings.longBreak : settings.shortBreak) * 60;
+  } else {
+    pomoState.phase = 'work';
+    pomoState.timeLeft = settings.work * 60;
+  }
+  updatePomodoroDisplay();
+}
+
+function stopPomodoro() {
+  clearInterval(pomoInterval);
+  pomoState = { running: false, paused: false, phase: 'work', timeLeft: settings.work * 60, cycle: 1 };
+  updatePomodoroDisplay();
+}
+
+document.querySelectorAll('.web-nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.web-nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.web-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    document.getElementById('pageTitle').textContent = btn.textContent;
+  });
+});
+
+document.getElementById('pomoStart').addEventListener('click', startPomodoro);
+document.getElementById('pomoPause').addEventListener('click', pausePomodoro);
+document.getElementById('pomoSkip').addEventListener('click', skipPomodoro);
+document.getElementById('pomoStop').addEventListener('click', stopPomodoro);
+
+document.getElementById('saveSettings').addEventListener('click', () => {
+  settings.work = parseInt(document.getElementById('settingWork').value) || 25;
+  settings.shortBreak = parseInt(document.getElementById('settingShort').value) || 5;
+  settings.longBreak = parseInt(document.getElementById('settingLong').value) || 15;
+  saveSettings();
+  if (!pomoState.running) pomoState.timeLeft = settings.work * 60;
+  renderPomodoro();
+  alert('Settings saved!');
+});
+
+document.getElementById('clearData').addEventListener('click', () => {
+  if (confirm('Clear all data?')) {
+    data = {};
+    saveData();
+    renderOverview();
+    renderAnalytics();
+  }
+});
+
+document.getElementById('exportData').addEventListener('click', () => {
+  let csv = 'Date,Domain,Path,TimeSeconds,Category\n';
+  for (const [date, dayData] of Object.entries(data)) {
+    for (const site of Object.values(dayData)) {
+      csv += `${date},"${site.domain}","${site.path}",${site.total_time},${site.category}\n`;
+    }
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'timeblock-export.csv';
+  a.click();
+});
+
+renderOverview();
+renderAnalytics();
+renderPomodoro();
 </script>
 </body>
 </html>
