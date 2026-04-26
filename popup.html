@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TimeBlock</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="popup-body">
+  <main class="popup-shell">
+    <section class="hero-card">
+      <div>
+        <p class="eyebrow">TimeBlock</p>
+        <h1>Focus Timer</h1>
+      </div>
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="focus">Focus</button>
+        <button class="tab-btn" data-tab="pomodoro">Pomodoro</button>
+      </div>
+    </section>
+
+    <section id="focus-tab" class="tab-content active">
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Quick Focus</h3>
+        </div>
+        <div class="pomodoro-presets">
+          <button id="focusBtn15" class="chip-btn">15m</button>
+          <button id="focusBtn25" class="chip-btn">25m</button>
+          <button id="focusBtn60" class="chip-btn">60m</button>
+          <button id="stopFocusBtn" class="chip-btn chip-danger">Stop</button>
+        </div>
+        <div class="focus-inline" id="focusStatus">Focus mode off</div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Current Tab Limit</h3>
+        </div>
+        <div class="inline-form compact">
+          <input id="currentTabDomain" type="text" disabled placeholder="No tab">
+          <input id="currentTabLimit" type="number" min="1" max="720" placeholder="Min">
+          <button id="saveTabLimit" class="btn-secondary">Set</button>
+        </div>
+        <div class="limit-progress-wrap">
+          <div class="limit-progress"><span id="limitProgressFill"></span></div>
+          <div class="limit-progress-meta">
+            <span id="currentTabUsed">Used: 0s</span>
+            <span id="currentTabRemaining">No limit</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-grid mini">
+        <article>
+          <p>Total</p>
+          <h2 id="totalTime">0m</h2>
+        </article>
+        <article>
+          <p>Focus</p>
+          <h2 id="focusTime">0m</h2>
+        </article>
+        <article>
+          <p>Distract</p>
+          <h2 id="distractionTime">0m</h2>
+        </article>
+      </section>
+    </section>
+
+    <section id="pomodoro-tab" class="tab-content">
+      <section class="panel centered">
+        <p id="pomodoroPhaseLabel">Ready to focus</p>
+        <div class="pomodoro-time big" id="pomodoroTimer">25:00</div>
+        <p id="pomodoroCycle">Cycle 1</p>
+      </section>
+
+      <section class="panel">
+        <div class="pomodoro-actions">
+          <button id="pomodoroStart" class="btn-primary">Start</button>
+          <button id="pomodoroPause" class="btn-secondary">Pause</button>
+          <button id="pomodoroSkip" class="btn-secondary">Skip</button>
+          <button id="pomodoroStop" class="btn-danger">Stop</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Cycle Settings</h3>
+        </div>
+        <div class="inline-form compact">
+          <input id="quickWorkMinutes" type="number" min="10" max="90" placeholder="Work">
+          <input id="quickBreakMinutes" type="number" min="3" max="30" placeholder="Break">
+          <button id="saveQuickPomodoro" class="btn-secondary">Save</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="popup-footer">
+      <button id="viewFullStats" class="link-btn">Open Dashboard</button>
+    </section>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
