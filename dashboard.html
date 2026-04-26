@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TimeBlock Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+      <div class="brand-block">
+        <p>TimeBlock</p>
+        <h1>Focus Console</h1>
+      </div>
+      <nav class="nav-stack">
+        <button class="nav-link active" data-tab="overview">Overview</button>
+        <button class="nav-link" data-tab="analytics">Analytics</button>
+        <button class="nav-link" data-tab="calendar">Calendar</button>
+        <button class="nav-link" data-tab="pomodoro">Pomodoro</button>
+        <button class="nav-link" data-tab="blocked">Blocked Sites</button>
+        <button class="nav-link" data-tab="settings">Settings</button>
+      </nav>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-topbar">
+        <h2 id="pageTitle">Overview</h2>
+        <div class="toolbar-actions">
+          <button id="syncBtn" class="btn-secondary">Refresh</button>
+          <button id="openPopupBtn" class="btn-primary">Open Popup</button>
+        </div>
+      </header>
+
+      <section id="overview" class="tab-content active">
+        <div class="grid-3">
+          <article class="metric-card"><p>Total tracked</p><h3 id="summaryTotal">0h 0m</h3></article>
+          <article class="metric-card"><p>Focus time</p><h3 id="summaryFocus">0h 0m</h3></article>
+          <article class="metric-card"><p>Productivity</p><h3 id="summaryProductivity">0%</h3></article>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel">
+            <div class="panel-head"><h3>Category breakdown</h3></div>
+            <div id="categoryChart" class="bars-block big"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>Last 7 days</h3></div>
+            <div id="weekChart" class="bars-block big"></div>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Top sites today</h3></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Website</th><th>Time</th><th>Category</th><th>Sessions</th></tr>
+              </thead>
+              <tbody id="topSitesBody">
+                <tr><td colspan="4" class="empty">No data yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Open tabs overview</h3></div>
+          <div id="liveTabsCards" class="tabs-grid"></div>
+        </article>
+      </section>
+
+      <section id="analytics" class="tab-content">
+        <article class="panel">
+          <div class="panel-head">
+            <h3>Time trend</h3>
+            <select id="dateRange" class="form-control">
+              <option value="today">Today</option>
+              <option value="week">Week</option>
+              <option value="month">Month</option>
+              <option value="all">All time</option>
+            </select>
+          </div>
+          <div id="analyticsChart" class="bars-block big"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Overall time by domain</h3></div>
+          <div id="domainOverallChart" class="bars-block big"></div>
+        </article>
+      </section>
+
+      <section id="calendar" class="tab-content">
+        <article class="panel">
+          <div class="panel-head">
+            <h3>Weekly activity</h3>
+            <div class="inline-actions">
+              <button id="prevWeek" class="btn-secondary">Previous</button>
+              <p id="weekDisplay"></p>
+              <button id="nextWeek" class="btn-secondary">Next</button>
+            </div>
+          </div>
+          <div id="weekView" class="week-view"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Schedule focus block</h3></div>
+          <form id="blockForm" class="form-grid">
+            <label class="picker-field">Date<input type="date" id="blockDate" required></label>
+            <label class="picker-field">Start<input type="time" id="blockStart" required></label>
+            <label class="picker-field">End<input type="time" id="blockEnd" required></label>
+            <label class="checkbox-row"><input type="checkbox" id="blockDistract" checked> Block distracting sites</label>
+            <button type="submit" class="btn-primary">Save Block</button>
+          </form>
+          <div id="scheduledBlocksList" class="list-block"></div>
+        </article>
+      </section>
+
+      <section id="pomodoro" class="tab-content">
+        <article class="panel">
+          <div class="panel-head"><h3>Pomodoro settings</h3></div>
+          <form id="pomodoroForm" class="form-grid">
+            <label>Work minutes<input type="number" id="pWork" min="10" max="90" value="25"></label>
+            <label>Short break<input type="number" id="pShort" min="3" max="30" value="5"></label>
+            <label>Long break<input type="number" id="pLong" min="10" max="60" value="15"></label>
+            <label>Long break every<input type="number" id="pEvery" min="2" max="8" value="4"></label>
+            <label class="checkbox-row"><input type="checkbox" id="pAutoBreaks" checked> Auto start breaks</label>
+            <label class="checkbox-row"><input type="checkbox" id="pAutoWork"> Auto start work</label>
+            <button type="submit" class="btn-primary">Save Pomodoro Settings</button>
+          </form>
+        </article>
+      </section>
+
+      <section id="blocked" class="tab-content">
+        <article class="panel">
+          <div class="panel-head"><h3>Blocked sites</h3></div>
+          <form id="blockSiteForm" class="inline-form">
+            <input type="text" id="newBlockedSite" placeholder="youtube.com" required>
+            <button type="submit" class="btn-primary">Add</button>
+          </form>
+          <div id="blockedSitesList" class="chips"></div>
+          <div class="quick-row">
+            <button class="btn-secondary quick-block" data-sites="youtube.com,netflix.com,twitch.tv">Entertainment</button>
+            <button class="btn-secondary quick-block" data-sites="facebook.com,instagram.com,twitter.com,x.com">Social</button>
+            <button class="btn-secondary quick-block" data-sites="reddit.com,9gag.com,imgur.com">Memes</button>
+            <button class="btn-secondary quick-block" data-sites="youtube.com,reddit.com,twitter.com,facebook.com,instagram.com">All</button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Per-site daily limits</h3></div>
+          <div id="siteLimitsList" class="list-block"></div>
+        </article>
+      </section>
+
+      <section id="settings" class="tab-content">
+        <article class="panel">
+          <div class="panel-head"><h3>General settings</h3></div>
+          <form id="settingsForm" class="form-grid">
+            <label>Theme
+              <select id="themeSelect" class="form-control">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="auto">Auto</option>
+              </select>
+            </label>
+            <label>Default focus duration (minutes)<input type="number" id="focusDuration" min="5" max="180" value="25"></label>
+            <label class="checkbox-row"><input type="checkbox" id="enableNotif" checked> Enable notifications</label>
+            <label class="checkbox-row"><input type="checkbox" id="soundNotif"> Sound on complete</label>
+            <button type="submit" class="btn-primary">Save Settings</button>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Data</h3></div>
+          <div class="inline-actions">
+            <button id="exportData" class="btn-secondary">Export CSV</button>
+            <button id="clearData" class="btn-danger">Clear Data</button>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

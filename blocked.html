@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Blocked · TimeBlock</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="blocked-body">
+  <main class="blocked-card">
+    <p class="eyebrow">TimeBlock</p>
+    <h1>Site Paused</h1>
+    <p class="empty" id="blockReason"></p>
+    <p class="blocked-domain" id="blockedDomain"></p>
+
+    <div class="coach-scene" aria-hidden="true">
+      <div class="room-glow"></div>
+      <div class="desk"></div>
+      <div class="chair"></div>
+      <div class="laptop"></div>
+      <div class="coffee"><i></i><i></i></div>
+      <div class="person human">
+        <span class="head">
+          <i class="eye left"></i>
+          <i class="eye right"></i>
+          <i class="mouth"></i>
+        </span>
+        <span class="neck"></span>
+        <span class="torso"></span>
+        <span class="arm arm-left"></span>
+        <span class="arm arm-right"></span>
+        <span class="leg leg-left"></span>
+        <span class="leg leg-right"></span>
+      </div>
+      <div class="bubble" id="coachBubble">Look away from screen, then stretch.</div>
+    </div>
+
+    <div class="blocked-timer-wrap">
+      <p>Remaining</p>
+      <h2 id="timer">00:00</h2>
+    </div>
+
+    <div id="limitChallenge" class="challenge-card" hidden>
+      <p class="challenge-title">Unlock challenge</p>
+      <p class="challenge-text">Solve this quick challenge to reopen this exact page.</p>
+      <p id="challengePrompt" class="challenge-prompt"></p>
+      <div class="inline-form">
+        <input id="challengeInput" type="text" placeholder="Type answer">
+        <button id="unlockBtn" class="btn-primary">Unlock & Return</button>
+      </div>
+      <p id="challengeMessage" class="empty"></p>
+    </div>
+
+    <div class="blocked-actions">
+      <button id="backBtn" class="btn-secondary">Return Back</button>
+      <button id="endFocusBtn" class="btn-danger">End Focus Mode</button>
+    </div>
+
+    <ul class="tips-list">
+      <li>Stand up for 60 seconds and loosen your shoulders.</li>
+      <li>Do 8 slow neck rolls and 10 deep breaths.</li>
+      <li>Drink water or grab coffee, then return with focus.</li>
+    </ul>
+  </main>
+  <script src="blocked.js"></script>
+</body>
+</html>
